@@ -24,15 +24,15 @@ exports.command = async function ({ bot, message, msg, chatId, args }) {
 
   const text = msg.text;
   const dateNow = Date.now();
-  const fullTime = moment.tz(global.settings.timeZone || "Asia/Dhaka");
+  const fullTime = moment.tz(global.config.timeZone || "Asia/Dhaka");
 
   const timeStr = fullTime.format("HH:mm:ss");
   const dateStr = fullTime.format("DD/MM/YYYY");
   const dayStr = fullTime.format("dddd");
   const yearStr = fullTime.format("YYYY");
 
-  const { admin, symbols, devMode, prefix } = global.settings;
-  const { commands, cooldowns } = global.ownersv2;
+  const { admin, symbols, devMode, prefix } = global.config;
+  const { cmds, cooldowns } = global.ownersv2;
   const { from, chat } = msg;
   const senderID = String(from.id);
   const userId = from.id;
@@ -64,12 +64,12 @@ exports.command = async function ({ bot, message, msg, chatId, args }) {
     }
   }
 
-  let command = commands.get(commandName);
+  let command = cmds.get(commandName);
   if (!command) {
-    for (const cmd of commands.values()) {
+    for (const cmd of cmds.values()) {
       if (
-        Array.isArray(cmd.meta.aliases) &&
-        cmd.meta.aliases.map(alias => alias.toLowerCase()).includes(commandName)
+        Array.isArray(cmd.nix.aliases) &&
+        cmd.nix.aliases.map(alias => alias.toLowerCase()).includes(commandName)
       ) {
         command = cmd;
         break;
@@ -83,29 +83,29 @@ exports.command = async function ({ bot, message, msg, chatId, args }) {
     } else return;
   }
   
-  const cmdPrefixSetting = command.meta.prefix ?? false;
+  const cmdPrefixSetting = command.nix.prefix ?? false;
 
   if (cmdPrefixSetting && prefixUsed) {
-    return message.reply(texts.noPrefixRequired.replace('{commandName}', command.meta.name));
+    return message.reply(texts.noPrefixRequired.replace('{commandName}', command.nix.name));
   }
 
   if (!cmdPrefixSetting && !prefixUsed) {
-    return message.reply(texts.prefixRequired.replace('{commandName}', command.meta.name).replace('{prefix}', effectivePrefix));
+    return message.reply(texts.prefixRequired.replace('{commandName}', command.nix.name).replace('{prefix}', effectivePrefix));
   }
 
   const usages = () => {
-    if (!command.meta.guide) return;
+    if (!command.nix.guide) return;
     let usageText = `${symbols} Usages:\n\n`;
-    const displayPrefix = command.meta.prefix === true ? "" : effectivePrefix;
+    const displayPrefix = command.nix.prefix === true ? "" : effectivePrefix;
 
-    if (Array.isArray(command.meta.guide)) {
-      usageText += command.meta.guide.map(guide => `${displayPrefix}${command.meta.name} ${guide}`).join("\n");
+    if (Array.isArray(command.nix.guide)) {
+      usageText += command.nix.guide.map(guide => `${displayPrefix}${command.nix.name} ${guide}`).join("\n");
     } else {
-      usageText += `${displayPrefix}${command.meta.name} ${command.meta.guide}`;
+      usageText += `${displayPrefix}${command.nix.name} ${command.nix.guide}`;
     }
 
-    if (command.meta.description) {
-      usageText += `\n- ${command.meta.description}`;
+    if (command.nix.description) {
+      usageText += `\n- ${command.nix.description}`;
     }
 
     return message.reply(usageText, { parse_mode: "Markdown" });
@@ -114,14 +114,14 @@ exports.command = async function ({ bot, message, msg, chatId, args }) {
   const isBotAdmin = admin.includes(senderID);
   const isVIP = global.vip?.uid?.includes(senderID);
 
-  if (command.meta.type === "administrator" && !isBotAdmin) {
+  if (command.nix.type === "administrator" && !isBotAdmin) {
     if (!["group", "supergroup"].includes(chat.type)) {
-      return message.reply(texts.adminGroupOnly.replace('{commandName}', command.meta.name));
+      return message.reply(texts.adminGroupOnly.replace('{commandName}', command.nix.name));
     }
     try {
       const member = await bot.getChatMember(chatId, senderID);
       if (!(member.status === "administrator" || member.status === "creator")) {
-        return message.reply(texts.notGroupAdmin.replace('{commandName}', command.meta.name));
+        return message.reply(texts.notGroupAdmin.replace('{commandName}', command.nix.name));
       }
     } catch (error) {
       return message.reply(texts.adminVerificationFailed);
@@ -129,27 +129,27 @@ exports.command = async function ({ bot, message, msg, chatId, args }) {
   }
 
   if (!isBotAdmin) {
-    if (command.meta.type === "admin") {
-      return message.reply(texts.notBotAdmin.replace('{commandName}', command.meta.name));
+    if (command.nix.type === "admin") {
+      return message.reply(texts.notBotAdmin.replace('{commandName}', command.nix.name));
     }
-    if (command.meta.type === "vip" && !isVIP) {
-      return message.reply(texts.notVip.replace('{commandName}', command.meta.name));
+    if (command.nix.type === "vip" && !isVIP) {
+      return message.reply(texts.notVip.replace('{commandName}', command.nix.name));
     }
-    if (command.meta.type === "group" && !["group", "supergroup"].includes(chat.type)) {
-      return message.reply(texts.groupOnly.replace('{commandName}', command.meta.name));
+    if (command.nix.type === "group" && !["group", "supergroup"].includes(chat.type)) {
+      return message.reply(texts.groupOnly.replace('{commandName}', command.nix.name));
     }
-    if (command.meta.type === "private" && chat.type !== "private") {
-      return message.reply(texts.privateOnly.replace('{commandName}', command.meta.name));
+    if (command.nix.type === "private" && chat.type !== "private") {
+      return message.reply(texts.privateOnly.replace('{commandName}', command.nix.name));
     }
   }
 
   if (!isBotAdmin) {
-    if (!cooldowns.has(command.meta.name)) {
-      cooldowns.set(command.meta.name, new Map());
+    if (!cooldowns.has(command.nix.name)) {
+      cooldowns.set(command.nix.name, new Map());
     }
 
-    const timestamps = cooldowns.get(command.meta.name);
-    const expirationTime = (command.meta.cooldown || 1) * 1000;
+    const timestamps = cooldowns.get(command.nix.name);
+    const expirationTime = (command.nix.cooldown || 1) * 1000;
 
     if (timestamps.has(senderID)) {
       const lastUsed = timestamps.get(senderID);
