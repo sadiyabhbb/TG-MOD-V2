@@ -1,22 +1,22 @@
-const { commands } = global.ownersv2;
+const { cmds } = global.ownersv2;
 
 exports.word = async function ({ bot, message, msg, chatId }) {
   if (!msg || !msg.text) return;
 
   const text = msg.text.trim();
 
-  if (text.startsWith(global.settings.prefix)) return;
+  if (text.startsWith(global.config.prefix)) return;
 
   const tokens = text.split(/\s+/);
   if (tokens.length > 0) {
     const firstToken = tokens[0].toLowerCase();
-    for (const cmd of commands.values()) {
-      if (cmd.meta.prefix === false || cmd.meta.prefix === "both") {
-        if (cmd.meta.name.toLowerCase() === firstToken) return;
+    for (const cmd of cmds.values()) {
+      if (cmd.nix.prefix === false || cmd.nix.prefix === "both") {
+        if (cmd.nix.name.toLowerCase() === firstToken) return;
         if (
-          cmd.meta.aliases &&
-          Array.isArray(cmd.meta.aliases) &&
-          cmd.meta.aliases.map(alias => alias.toLowerCase()).includes(firstToken)
+          cmd.nix.aliases &&
+          Array.isArray(cmd.nix.aliases) &&
+          cmd.nix.aliases.map(alias => alias.toLowerCase()).includes(firstToken)
         ) {
           return;
         }
@@ -24,11 +24,11 @@ exports.word = async function ({ bot, message, msg, chatId }) {
     }
   }
 
-  for (const cmd of commands.values()) {
-    if (cmd.meta && cmd.meta.keyword) {
-      const keywords = Array.isArray(cmd.meta.keyword)
-        ? cmd.meta.keyword
-        : [cmd.meta.keyword];
+  for (const cmd of cmds.values()) {
+    if (cmd.nix && cmd.nix.keyword) {
+      const keywords = Array.isArray(cmd.nix.keyword)
+        ? cmd.nix.keyword
+        : [cmd.nix.keyword];
       const keywordRegex = new RegExp(`\\b(${keywords.join("|")})\\b`, "i");
 
       if (keywordRegex.test(msg.text)) {
@@ -36,7 +36,7 @@ exports.word = async function ({ bot, message, msg, chatId }) {
         try {
           await cmd.onWord({ bot, message, msg, chatId, args });
         } catch (error) {
-          console.error(`Error in event handler for command "${cmd.meta.name}": ${error.message}`);
+          console.error(`Error in event handler for command "${cmd.nix.name}": ${error.message}`);
         }
       }
     }
