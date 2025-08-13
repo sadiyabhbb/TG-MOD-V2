@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const { create, clear } = require('./cache.js');
+const { create, clear } = require('../database/cache.js');
 
 const cacheReady = (async () => {
   await create();
