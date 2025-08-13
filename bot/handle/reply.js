@@ -1,5 +1,5 @@
 exports.reply = async function({ bot, message, msg, chatId, args }) {
-  const { replies, commands } = global.ownersv2;
+  const { replies, cmds } = global.ownersv2;
   const userId = msg.from.id;
 
   if (!msg.reply_to_message) {
@@ -11,15 +11,15 @@ exports.reply = async function({ bot, message, msg, chatId, args }) {
     return;
   }
 
-  const { meta, ...data } = replyData;
+  const { nix, ...data } = replyData;
 
-  if (!meta || !meta.name) {
+  if (!nix || !nix.name) {
     await bot.sendMessage(chatId, "Cannot find command name to execute this reply!", { parse_mode: "Markdown" });
     return;
   }
 
-  const commandName = meta.name;
-  const command = commands.get(commandName);
+  const commandName = nix.name;
+  const command = cmds.get(commandName);
   if (!command) {
     await bot.sendMessage(chatId, `Cannot find command: ${commandName}`, { parse_mode: "Markdown" });
     return;
