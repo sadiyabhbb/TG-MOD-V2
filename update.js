@@ -21,7 +21,7 @@ function log(level, message) {
   console.log(`${LOG_PREFIX[level]} ${message}`);
 }
 
-const updateConfigPath = path.join(__dirname, "logger", "updater.json");
+const updateConfigPath = path.join(__dirname, "updater.json");
 let updateConfig;
 try {
   const configData = fs.readFileSync(updateConfigPath, "utf8");
