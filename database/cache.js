@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const cacheDir = path.join(process.cwd(), 'apps/temp');
+const cacheDir = path.join(process.cwd(), 'scripts/cmds/temp');
 
 let clearTimeoutId = null;
 
