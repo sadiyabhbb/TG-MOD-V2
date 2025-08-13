@@ -8,7 +8,7 @@ exports.listen = async function (bot) {
       const chatId = msg.chat.id;
       const userId = msg.from.id;
       const message = new Message(bot, msg);
-      const handlersPath = path.join(__dirname, 'handle');
+      const handlersPath = path.join(__dirname, '../bot/handle');
 
       const files = fs.readdirSync(handlersPath);
       for (const file of files) {
