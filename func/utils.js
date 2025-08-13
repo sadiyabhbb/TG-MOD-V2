@@ -1,6 +1,41 @@
+"use strict";
+
+const { execSync } = require("child_process");
 const fs = require('fs-extra');
 const path = require('path');
 const { create, clear } = require('../database/cache.js');
+
+const RESTART_CODE = 0;
+
+exports.install = function() {
+  const originalRequire = module.constructor.prototype.require;
+
+  module.constructor.prototype.require = function(moduleName) {
+    try {
+      return originalRequire.call(this, moduleName);
+    } catch (error) {
+      if (error.code === "MODULE_NOT_FOUND" && !moduleName.startsWith(".") && !moduleName.startsWith("/")) {
+        execSync(`npm install ${moduleName}`, {
+          stdio: "inherit",
+          cwd: process.cwd(),
+        });
+        restartBot();
+
+        return originalRequire.call(this, moduleName);
+      }
+      throw error;
+    }
+  };
+};
+
+function restartBot() {
+  process.exit(RESTART_CODE);
+}
+
+if (!global.install) {
+  exports.install();
+  global.install = true;
+}
 
 const cacheReady = (async () => {
   await create();
@@ -38,12 +73,10 @@ async function loadDirectory(directory, moduleType, collection) {
         validateModule(moduleExport);
         collection.set(moduleExport.nix.name, moduleExport);
       } catch (error) {
-        console.error(`Error loading ${moduleType} "${file}": ${error.message}`);
         errors[file] = error;
       }
     }
   } catch (error) {
-    console.error(`Error reading ${moduleType} directory "${directory}": ${error.message}`);
     errors.directory = error;
   }
 
@@ -67,4 +100,4 @@ async function scriptsUtils() {
   return Object.keys(errors).length === 0 ? false : errors;
 }
 
-module.exports = { utils };
+module.exports = { utils: scriptsUtils };
