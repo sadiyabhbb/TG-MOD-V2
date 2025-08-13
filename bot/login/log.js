@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 
 const login = () => {
-  const tokens = global.states.tokens;
+  const tokens = global.token.tokens;
 
   const bots = tokens.map(token => new TelegramBot(token, { polling: true }));
   const { listen } = require('../../logger/listen.js');
