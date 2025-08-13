@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { Message } = require("./system/message");
+const { Message } = require("../bot/custom.js");
 
 exports.listen = async function (bot) {
   bot.on('message', async (msg) => {
