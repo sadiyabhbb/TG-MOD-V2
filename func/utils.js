@@ -54,12 +54,12 @@ async function scriptsUtils() {
   await cacheReady;
 
   const errors = {};
-  const commandsPath = path.join(process.cwd(), 'apps', 'scripts', 'commands');
-  const eventsPath = path.join(process.cwd(), 'apps', 'scripts', 'events');
+  const commandsPath = path.join(process.cwd(), 'scripts', 'cmds');
+  const eventsPath = path.join(process.cwd(), 'scripts', 'events');
 
   const [commandErrors, eventErrors] = await Promise.all([
-    loadDirectory(commandsPath, 'command', global.ownersv2.commands),
-    loadDirectory(eventsPath, 'event', global.ownersv2.events)
+    loadDirectory(commandsPath, 'cmds', global.ownersv2.commands),
+    loadDirectory(eventsPath, 'events', global.ownersv2.events)
   ]);
 
   Object.assign(errors, commandErrors, eventErrors);
