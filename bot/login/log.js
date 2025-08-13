@@ -4,7 +4,7 @@ const login = () => {
   const tokens = global.states.tokens;
 
   const bots = tokens.map(token => new TelegramBot(token, { polling: true }));
-  const { listen } = require('.../logger/listen.js');
+  const { listen } = require('../../logger/listen.js');
 
   bots.forEach(bot => listen(bot));
 
