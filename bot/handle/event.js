@@ -17,7 +17,7 @@ exports.event = async function ({ bot, msg, chatId, message }) {
     const eventType = msg.new_chat_members ? "welcome" : "leave";
 
     for (const [eventName, eventHandler] of events.entries()) {
-      if (eventHandler.meta.type.includes(eventType)) {
+      if (eventHandler.nix.type.includes(eventType)) {
         try {
           const context = { bot, message, msg, chatId };
           await eventHandler.onStart(context);
@@ -44,7 +44,7 @@ ${separator}
             console.log(logMessage);
           }
         } catch (error) {
-          console.error(`\x1b[31m[ Event Error ] ${eventHandler.meta.name}:\x1b[0m`, error);
+          console.error(`\x1b[31m[ Event Error ] ${eventHandler.nix.name}:\x1b[0m`, error);
         }
       }
     }
