@@ -29,5 +29,5 @@ global.scripts = scriptsUtils;
 
 scriptsUtils();
 
-const { login } = require('./system/login');
+const { login } = require('./login/log');
 login();
