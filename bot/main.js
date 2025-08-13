@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { install } = require('./system/install');
+const { install } = require('./login/loadScripts');
 const { scriptsUtils } = require('./utility/scriptsUtils.js');
 
 const configPath = path.join(process.cwd(), 'config.json');
