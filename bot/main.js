@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { install } = require('./login/loadScripts');
-const { scriptsUtils } = require('./utility/scriptsUtils.js');
+const { scriptsUtils } = require('../func/Utils.js');
 
 const configPath = path.join(process.cwd(), 'config.json');
 const tokenPath = path.join(process.cwd(), 'token.txt');
