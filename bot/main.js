@@ -18,7 +18,7 @@ global.config = config;
 global.token = token;
 
 global.ownersv2 = {
-  commands: new Map(),
+  cmds: new Map(),
   cooldowns: new Map(),
   replies: new Map(),
   callbacks: new Map(),
