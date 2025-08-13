@@ -18,41 +18,41 @@ const c = {
   bold: "\x1b[1m",
 };
 
-const commandsDir = path.join(__dirname, "apps", "scripts", "commands");
-const eventsDir = path.join(__dirname, "apps", "scripts", "events");
+const cmdsDir = path.join(__dirname, "scripts", "cmds");
+const eventsDir = path.join(__dirname, "scripts", "events");
 
 console.log(
   `${c.cyan}────────────────────────────────────────────\n${c.bold}${c.pink}LOADING COMMANDS${c.reset}\n────────────────────────────────────────────${c.reset}`
 );
 
-const loadCommands = () => {
-  const commands = new Map();
+const loadCmds = () => {
+  const cmds = new Map();
 
-  if (!fs.existsSync(commandsDir)) {
-    console.warn(`${c.yellow}[WARNING]${c.reset} Commands directory not found: ${commandsDir}`);
-    return commands;
+  if (!fs.existsSync(cmdsDir)) {
+    console.warn(`${c.yellow}[WARNING]${c.reset} Cmds directory not found: ${cmdsDir}`);
+    return cmds;
   }
 
-  const commandFiles = fs.readdirSync(commandsDir).filter((file) => file.endsWith(".js"));
+  const commandFiles = fs.readdirSync(cmdsDir).filter((file) => file.endsWith(".js"));
 
   for (const file of commandFiles) {
     try {
-      const command = require(path.join(commandsDir, file));
-      if (command.meta?.name) {
-        commands.set(command.meta.name.toLowerCase(), command);
+      const command = require(path.join(cmdsDir, file));
+      if (command.nix?.name) {
+        cmds.set(command.nix.name.toLowerCase(), command);
         console.log(`${c.green}[COMMAND]${c.reset} Loaded ${file}`);
       } else {
-        console.warn(`${c.yellow}[SKIP]${c.reset} Missing meta.name in ${file}`);
+        console.warn(`${c.yellow}[SKIP]${c.reset} Missing nix.name in ${file}`);
       }
     } catch (err) {
       console.error(`${c.red}[ERROR]${c.reset} Failed to load ${file}: ${err.message}`);
     }
   }
 
-  return commands;
+  return cmds;
 };
 
-const commands = loadCommands();
+const cmds = loadCmds();
 
 console.log(
   `\n${c.cyan}────────────────────────────────────────────\n${c.bold}${c.lavender}LOADING EVENTS${c.reset}\n────────────────────────────────────────────${c.reset}`
@@ -112,27 +112,27 @@ https
 
 let botProcess = null;
 
-const manageBotProcess = (script) => {
+const manageBotProcess = (scripts) => {
   if (botProcess) {
     botProcess.kill();
-    console.log(`${c.yellow}[PROCESS]${c.reset} Terminated previous instance of ${script}`);
+    console.log(`${c.yellow}[PROCESS]${c.reset} Terminated previous instance of ${scripts}`);
   }
 
-  botProcess = spawn("node", ["--trace-warnings", "--async-stack-traces", script], {
+  botProcess = spawn("node", ["--trace-warnings", "--async-stack-traces", scripts], {
     cwd: __dirname,
     stdio: "inherit",
     shell: true,
   });
 
   botProcess.on("close", (code) => {
-    console.log(`${c.yellow}[PROCESS]${c.reset} ${script} exited with code ${code}`);
+    console.log(`${c.yellow}[PROCESS]${c.reset} ${scripts} exited with code ${code}`);
   });
 
   botProcess.on("error", (err) => {
-    console.error(`${c.red}[PROCESS ERROR]${c.reset} Failed to start ${script}: ${err.message}`);
+    console.error(`${c.red}[PROCESS ERROR]${c.reset} Failed to start ${scripts}: ${err.message}`);
   });
 };
 
 manageBotProcess("logger/main.js");
 
-module.exports = { commands };
+module.exports = { cmds };
