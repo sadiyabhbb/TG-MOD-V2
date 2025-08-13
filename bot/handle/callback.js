@@ -1,85 +1,83 @@
-exports.callback = function({ bot, msg, chatId, message }) {
+const path = require('path');
+const fs = require('fs');
+
+exports.callback = function({ bot }) {
   if (bot._callbackHandler) {
     bot.removeListener('callback_query', bot._callbackHandler);
   }
 
+  const callbackDataFilePath = path.join(__dirname, 'data/callback.json');
+  let allowedCallbackPrefixes = [];
+
+  try {
+    const data = fs.readFileSync(callbackDataFilePath, 'utf8');
+    allowedCallbackPrefixes = JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading or parsing callback.json: ${error.message}`);
+    return;
+  }
+
   const parsePayload = (data) => {
-    if (typeof data !== 'string') return null;
-
-    if (data.startsWith("tm_")) {
-      const parts = data.split('_');
-      if (parts.length >= 2 && parts[0] === "tm") {
-        return {
-          command: "tm",
-          action: parts.slice(1).join('_'),
-          rawData: data
-        };
-      }
+    if (typeof data !== 'string' || !data) return null;
+    const parts = data.split('_');
+    if (parts.length > 1) {
+      return {
+        prefix: parts[0],
+        action: parts.slice(1).join('_'),
+        rawData: data
+      };
     }
-
-    try {
-      const jsonPayload = JSON.parse(data);
-      if (jsonPayload && typeof jsonPayload === 'object' && jsonPayload.command) {
-        return jsonPayload;
-      }
-    } catch (err) {
-      const parts = data.split(':');
-      if (parts.length > 0) {
-        return { command: parts[0], args: parts.slice(1) };
-      }
-    }
-
     return null;
   };
 
   bot._callbackHandler = async (callbackQuery) => {
     if (!callbackQuery || !callbackQuery.data) {
-      console.error('Invalid callback query received: No data', callbackQuery);
       return;
     }
 
     const payload = parsePayload(callbackQuery.data);
-    if (!payload || !payload.command) {
-      console.error('No command found in payload or invalid payload:', payload, 'Raw data:', callbackQuery.data);
-      return bot.answerCallbackQuery(callbackQuery.id, {
-        text: "Invalid callback format."
-      }).catch(console.error);
-    }
 
-    const { commands } = global.ownersv2;
-    if (!commands) {
-      console.error('Global client commands not initialized');
-      return;
-    }
-
-    const command = commands.get(payload.command);
-    if (!command || typeof command.onCallback !== 'function') {
-      console.error(`No valid onCallback handler found for command: ${payload.command}`);
+    if (!payload || !allowedCallbackPrefixes.includes(payload.prefix)) {
+      console.error(`Invalid or unauthorized callback prefix: ${payload?.prefix}`);
       return bot.answerCallbackQuery(callbackQuery.id, {
-        text: "Command not found or does not support callbacks.",
+        text: "Invalid command.",
         show_alert: true
       }).catch(console.error);
     }
-
+    
+    const handlerPath = path.join(__dirname, `${payload.prefix}.js`);
+    
     try {
+      if (!fs.existsSync(handlerPath)) {
+        throw new Error(`Handler file not found: ${handlerPath}`);
+      }
+      
+      delete require.cache[require.resolve(handlerPath)];
+      const handlerModule = require(handlerPath);
+
+      if (typeof handlerModule.onCallback !== 'function') {
+        throw new Error(`Handler file ${payload.prefix}.js does not export an onCallback function.`);
+      }
+
       const messageId = callbackQuery.message?.message_id;
       const chatId = callbackQuery.message?.chat?.id;
+
       if (!chatId) throw new Error('Chat ID not found in callback query');
 
-      await command.onCallback({
+      await handlerModule.onCallback({
         bot,
         callbackQuery,
         chatId,
         messageId,
-        args: [],
         payload,
       });
 
       if (!callbackQuery.answered) {
         await bot.answerCallbackQuery(callbackQuery.id);
       }
+      
     } catch (error) {
-      console.error(`Error executing onCallback for command "${payload.command}" with data "${callbackQuery.data}":`, error);
+      console.error(`Error executing callback for "${payload.prefix}" with data "${callbackQuery.data}":`, error);
       await bot.answerCallbackQuery(callbackQuery.id, {
         text: "An error occurred. Please try again.",
         show_alert: true
