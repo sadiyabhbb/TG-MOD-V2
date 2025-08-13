@@ -1,0 +1,13 @@
+emptyCommand=Please enter a command after the prefix or type 'help' to see available commands.
+commandNotFound=The command "{commandName}" is not found in my system.
+prefixRequired=The command "{commandName}" requires a prefix. Please use "{prefix}" before the command name.
+noPrefixRequired=The command "{commandName}" does not require a prefix. Please invoke it without the prefix.
+adminGroupOnly=The "{commandName}" command can only be used in a group or supergroup by an administrator.
+notGroupAdmin=You do not have sufficient permission to use the "{commandName}" command. (Requires group administrator)
+adminVerificationFailed=Unable to verify your group admin status. Please try again later.
+notBotAdmin=You do not have sufficient permission to use the "{commandName}" command.
+notVip=You do not have VIP access to use the "{commandName}" command.
+groupOnly=The "{commandName}" command can only be used in a group or supergroup.
+privateOnly=The "{commandName}" command can only be used in private chats.
+cooldown=😓 Please wait {timeLeft} seconds before using "{commandName}" again.
+commandExecutionError=Error executing command "{commandName}": {errorMessage}
