@@ -133,6 +133,6 @@ const manageBotProcess = (scripts) => {
   });
 };
 
-manageBotProcess("logger/main.js");
+manageBotProcess("bot/main.js");
 
 module.exports = { cmds };
