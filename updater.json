@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/FNG-ARYAN/TG-BOT-V2.git",
   "branch": "main",
-  "preserve": [""],
+  "preserve": ["config"],
   "backup": "bot/backups"
 }
