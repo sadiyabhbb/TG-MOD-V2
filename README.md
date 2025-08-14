@@ -37,9 +37,6 @@ A simple telegram bot
    ```bash
    node index.js
    ```
-## Note!
-
-Make sure make **Admin** the bot if you added it on a **Channel** to unlock **Privalage & Features** like `access to chat`, `no prefix` and more.
 
 ### Deployment
 
@@ -169,7 +166,7 @@ bot.editMessageMedia(
 ```
 
 7. **callback**
-```json
+```javascript
 //edit your scripts/cmds/aryan/callback.json
 [
 "cmd name here", "cmd name here2"
