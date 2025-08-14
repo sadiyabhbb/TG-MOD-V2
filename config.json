@@ -1,14 +1,16 @@
 {
+  "owner": "Aryan",
+  "username": "itzaryan008",
   "devMode": true,
   "adminOnly": false,
   "timeZone": "Asia/Dhaka",
-  "prefix": "×",
+  "prefix": "/",
   "symbols": "●",
   "admin": [
-    "7888999718"
+    "admin uid"
   ],
   "uid": [
-    "7442873640"
+    "vip admin uid"
   ],
-  "api": ""
+  "api": "https://aryan-nix-apis.vercel.app/api"
 }
