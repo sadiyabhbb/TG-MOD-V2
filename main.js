@@ -18,121 +18,158 @@ const c = {
   bold: "\x1b[1m",
 };
 
-const cmdsDir = path.join(__dirname, "scripts", "cmds");
-const eventsDir = path.join(__dirname, "scripts", "events");
+// --- LOG FILTER TO HIDE PORT & MESSAGESURL ---
+const messagesUrl = "https://raw.githubusercontent.com/RSF-ARYAN/stuffs/refs/heads/main/raw/messages.json";
+const originalLog = console.log;
+console.log = (...args) => {
+  if (args.some(arg => typeof arg === "string" && arg.includes(messagesUrl))) return;
+  if (args.some(arg => typeof arg === "string" && /\bport\b/i.test(arg))) return;
+  originalLog(...args);
+};
 
-console.log(
-  `${c.cyan}────────────────────────────────────────────\n${c.bold}${c.pink}LOADING COMMANDS${c.reset}\n────────────────────────────────────────────${c.reset}`
-);
+const fetchJson = (url) => {
+  return new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+      let data = "";
+      res.on("data", (chunk) => (data += chunk));
+      res.on("end", () => {
+        try {
+          resolve(JSON.parse(data));
+        } catch (error) {
+          reject(new Error(`Failed to parse JSON from ${url}: ${error.message}`));
+        }
+      });
+    }).on("error", (err) => {
+      reject(new Error(`Failed to fetch URL ${url}: ${err.message}`));
+    });
+  });
+};
 
-const loadCmds = () => {
-  const cmds = new Map();
+const getMessage = (messages, key, replacements = {}) => {
+  let message = messages;
+  const keyParts = key.split('.');
+  for (const part of keyParts) {
+    if (message && typeof message === 'object' && message.hasOwnProperty(part)) {
+      message = message[part];
+    } else {
+      return `[MISSING MESSAGE FOR KEY: ${key}]`;
+    }
+  }
+  if (typeof message !== 'string') {
+    return `[INVALID MESSAGE TYPE FOR KEY: ${key}]`;
+  }
+  for (const [placeholder, value] of Object.entries(replacements)) {
+    message = message.replace(new RegExp(`\\{${placeholder}\\}`, 'g'), value);
+  }
+  return message;
+};
 
-  if (!fs.existsSync(cmdsDir)) {
-    console.warn(`${c.yellow}[WARNING]${c.reset} Cmds directory not found: ${cmdsDir}`);
-    return cmds;
+const main = async () => {
+  let messages = {};
+
+  try {
+    messages = await fetchJson(messagesUrl);
+    console.log(`${c.green}[INFO]${c.reset} Messages loaded successfully`);
+  } catch (error) {
+    console.error(`${c.red}[ERROR]${c.reset} ${error.message}`);
+    process.exit(1);
   }
 
-  const commandFiles = fs.readdirSync(cmdsDir).filter((file) => file.endsWith(".js"));
+  const configPath = path.join(process.cwd(), 'config.json');
 
-  for (const file of commandFiles) {
-    try {
-      const command = require(path.join(cmdsDir, file));
-      if (command.nix?.name) {
-        cmds.set(command.nix.name.toLowerCase(), command);
-        console.log(`${c.green}[COMMAND]${c.reset} Loaded ${file}`);
-      } else {
-        console.warn(`${c.yellow}[SKIP]${c.reset} Missing nix.name in ${file}`);
+  if (!fs.existsSync(configPath)) {
+    console.error(`${c.red}[ERROR]${c.reset} ${getMessage(messages, 'errors.configNotFound')}`);
+    process.exit(1);
+  }
+
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  global.config = config;
+
+  const cmdsDir = path.join(__dirname, "scripts", "cmds");
+  const eventsDir = path.join(__dirname, "scripts", "events");
+
+  console.log(`${c.cyan}${getMessage(messages, 'separators.line')}\n${c.bold}${c.pink}${getMessage(messages, 'info.loadingCmds')}${c.red}\n${getMessage(messages, 'separators.line')}${c.reset}`);
+
+  const loadCmds = () => {
+    const cmds = new Map();
+    if (!fs.existsSync(cmdsDir)) {
+      console.warn(`${c.yellow}[WARNING]${c.reset} ${getMessage(messages, 'warnings.cmdsDirNotFound', { dir: cmdsDir })}`);
+      return cmds;
+    }
+    const commandFiles = fs.readdirSync(cmdsDir).filter((file) => file.endsWith(".js"));
+    for (const file of commandFiles) {
+      try {
+        const command = require(path.join(cmdsDir, file));
+        if (command.nix?.name) {
+          cmds.set(command.nix.name.toLowerCase(), command);
+          console.log(`${c.green}[COMMAND]${c.reset} ${getMessage(messages, 'info.cmdLoaded', { file })}`);
+        } else {
+          console.warn(`${c.yellow}[SKIP]${c.reset} ${getMessage(messages, 'warnings.missingCmdName', { file })}`);
+        }
+      } catch (err) {
+        console.error(`${c.red}[ERROR]${c.reset} ${getMessage(messages, 'errors.failedToLoadCmd', { file, message: err.message })}`);
       }
-    } catch (err) {
-      console.error(`${c.red}[ERROR]${c.reset} Failed to load ${file}: ${err.message}`);
     }
-  }
+    return cmds;
+  };
 
-  return cmds;
-};
+  const cmds = loadCmds();
 
-const cmds = loadCmds();
+  console.log(`\n${c.cyan}${getMessage(messages, 'separators.line')}\n${c.bold}${c.pink}${getMessage(messages, 'info.loadingEvents')}${c.red}\n${getMessage(messages, 'separators.line')}${c.reset}`);
 
-console.log(
-  `\n${c.cyan}────────────────────────────────────────────\n${c.bold}${c.lavender}LOADING EVENTS${c.reset}\n────────────────────────────────────────────${c.reset}`
-);
-
-const loadEvents = () => {
-  if (!fs.existsSync(eventsDir)) {
-    console.warn(`${c.yellow}[WARNING]${c.reset} Events directory not found: ${eventsDir}`);
-    return;
-  }
-
-  const eventFiles = fs.readdirSync(eventsDir).filter((file) => file.endsWith(".js"));
-
-  for (const file of eventFiles) {
-    try {
-      require(path.join(eventsDir, file));
-      console.log(`${c.orange}[EVENT]${c.reset} Loaded ${file}`);
-    } catch (err) {
-      console.error(`${c.red}[ERROR]${c.reset} Failed to load event ${file}: ${err.message}`);
+  const loadEvents = () => {
+    if (!fs.existsSync(eventsDir)) {
+      console.warn(`${c.yellow}[WARNING]${c.reset} ${getMessage(messages, 'warnings.eventsDirNotFound', { dir: eventsDir })}`);
+      return;
     }
-  }
-};
+    const eventFiles = fs.readdirSync(eventsDir).filter((file) => file.endsWith(".js"));
+    for (const file of eventFiles) {
+      try {
+        require(path.join(eventsDir, file));
+        console.log(`${c.green}[EVENT]${c.reset} ${getMessage(messages, 'info.eventLoaded', { file })}`);
+      } catch (err) {
+        console.error(`${c.red}[ERROR]${c.reset} ${getMessage(messages, 'errors.failedToLoadEvent', { file, message: err.message })}`);
+      }
+    }
+  };
 
-loadEvents();
+  loadEvents();
 
-const botInfo = {
-  login: "Bot logged in successfully",
-  info: "Running ✅",
-};
+  console.log(`\n${c.cyan}${getMessage(messages, 'separators.line')}\n${c.bold}${c.pink}${getMessage(messages, 'info.loadingAdminInfo')}${c.red}\n${getMessage(messages, 'separators.line')}${c.reset}`);
 
-console.log(
-  `\n${c.cyan}────────────────────────────────────────────\n${c.bold}${c.pink}BOT INFO${c.reset}\n────────────────────────────────────────────${c.reset}`
-);
-console.log(`${c.mint}Login:${c.reset} Successfully logged in`);
-console.log(`${c.lavender}Username:${c.reset} ${c.bold}${botInfo.username}${c.reset}`);
-console.log(`${c.lavender}Bot Name:${c.reset} ${c.bold}${botInfo.name}${c.reset}`);
-console.log(`${c.lavender}Bot ID:${c.reset} ${c.bold}${botInfo.id}${c.reset}`);
-
-console.log(
-  `\n${c.cyan}────────────────────────────────────────────\n${c.bold}${c.orange}ADMIN INFO${c.reset}\n────────────────────────────────────────────${c.reset}`
-);
-
-const adminTxtUrl =
-  "https://raw.githubusercontent.com/itzaryan008/Telegram-Control/main/admin.txt";
-
-https
-  .get(adminTxtUrl, (res) => {
+  const adminTxtUrl = "https://raw.githubusercontent.com/RSF-ARYAN/stuffs/refs/heads/main/raw/ck.txt";
+  https.get(adminTxtUrl, (res) => {
     let data = "";
     res.on("data", (chunk) => (data += chunk));
     res.on("end", () => {
-      console.log(`${c.cyan}${data.trim()}${c.reset}`);
+      console.log(`${c.cyan}${data.trim()}${c.cyan}`);
     });
-  })
-  .on("error", (err) => {
-    console.error(`${c.red}[ERROR]${c.reset} Could not fetch admin info: ${err.message}`);
+  }).on("error", (err) => {
+    console.error(`${c.red}[ERROR]${c.cyan} ${getMessage(messages, 'errors.failedToFetchAdmin', { message: err.message })}`);
   });
 
-let botProcess = null;
+  let botProcess = null;
+  const manageBotProcess = (scripts) => {
+    if (botProcess) {
+      botProcess.kill();
+      console.log(`${c.yellow}[PROCESS]${c.reset} ${getMessage(messages, 'warnings.processTerminated', { script: scripts })}`);
+    }
+    botProcess = spawn("node", ["--trace-warnings", "--async-stack-traces", scripts], {
+      cwd: __dirname,
+      stdio: "inherit",
+      shell: true,
+    });
+    botProcess.on("close", (code) => {
+      console.log(`${c.yellow}[PROCESS]${c.cyan} ${getMessage(messages, 'warnings.processExited', { script: scripts, code })}`);
+    });
+    botProcess.on("error", (err) => {
+      console.error(`${c.red}[PROCESS ERROR]${c.cyan} ${getMessage(messages, 'errors.processStartFailed', { script: scripts, message: err.message })}`);
+    });
+  };
 
-const manageBotProcess = (scripts) => {
-  if (botProcess) {
-    botProcess.kill();
-    console.log(`${c.yellow}[PROCESS]${c.reset} Terminated previous instance of ${scripts}`);
-  }
-
-  botProcess = spawn("node", ["--trace-warnings", "--async-stack-traces", scripts], {
-    cwd: __dirname,
-    stdio: "inherit",
-    shell: true,
-  });
-
-  botProcess.on("close", (code) => {
-    console.log(`${c.yellow}[PROCESS]${c.reset} ${scripts} exited with code ${code}`);
-  });
-
-  botProcess.on("error", (err) => {
-    console.error(`${c.red}[PROCESS ERROR]${c.reset} Failed to start ${scripts}: ${err.message}`);
-  });
+  manageBotProcess("bot/main.js");
+  
+  return { cmds };
 };
 
-manageBotProcess("bot/main.js");
-
-module.exports = { cmds };
+module.exports = main();
