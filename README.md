@@ -20,7 +20,7 @@
    ![MyIDBot Preview](https://i.imgur.com/pwwMlg1.jpeg)
    
 ### Configuration
-1. Add the Bot Token to `config.json`.
+1. Add the Bot Token to `token.txt`.
 2. Add the Admin ID to `config.json`.
 3. For VIP add the Admin ID to `config.json`.
 
