@@ -9,7 +9,7 @@ const nix = {
   aliases: ["music", "song"],
   description: "Searches and sends music/songs from YouTube.",
   author: "ArYAN",
-  prefix: true,
+  prefix: false,
   category: "music",
   type: "anyone",
   cooldown: 5,
