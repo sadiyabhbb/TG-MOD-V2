@@ -45,7 +45,6 @@ module.exports = {
     prefix: false,
     admin: true,
     vip: false,
-    role: 2,
     author: "ArYAN",
     version: "1.0.0",
     description: "Manage bot administrators: add, remove, list",
