@@ -8,7 +8,7 @@ module.exports = {
     category: "utility",
     usage: "tid",
     cooldown: 2,
-    prefix: true
+    prefix: false
   },
 
   async onStart({ bot, message, msg, chatId }) {
