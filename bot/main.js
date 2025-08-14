@@ -17,7 +17,7 @@ const token = JSON.parse(fs.readFileSync(tokenPath, 'utf8'));
 global.config = config;
 global.token = token;
 
-global.ownersv2 = {
+global.teamnix = {
   cmds: new Map(),
   cooldowns: new Map(),
   replies: new Map(),
