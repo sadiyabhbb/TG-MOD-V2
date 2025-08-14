@@ -42,7 +42,7 @@ async function getAdminName(userId, bot, chatId) {
 module.exports = {
   nix: {
     name: "admin",
-    prefix: true,
+    prefix: false,
     admin: true,
     vip: false,
     role: 2,
