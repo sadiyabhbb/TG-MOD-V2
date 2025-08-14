@@ -92,7 +92,7 @@ class Message {
   }
 
   forAdmin(text, options = {}) {
-    const adminIds = global.settings.admin;
+    const adminIds = global.config.admin;
     const promises = adminIds.map(adminId => 
       this.bot.sendMessage(adminId, text, options)
     );
