@@ -1,0 +1,23 @@
+{
+  "name": "TG-BOT-V2",
+  "version": "0.0.1",
+  "description": "A simple telegram bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "ArYAN",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "canvas": "^3.1.0",
+    "express": "^5.1.0",
+    "fs-extra": "^11.3.0",
+    "luxon": "^3.6.1",
+    "moment-timezone": "^0.5.48",
+    "node-fetch": "^3.3.2",
+    "node-telegram-bot-api": "^0.66.0",
+    "supports-color": "^10.0.0",
+    "yt-search": "^2.13.1"
+  }
+}
