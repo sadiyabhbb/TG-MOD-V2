@@ -39,14 +39,14 @@ exports.command = async function ({ bot, message, msg, chatId, args }) {
 
   const effectivePrefix = prefix;
   const prefixUsed = text.startsWith(effectivePrefix);
-  const commandText = prefixUsed ? text.slice(effectivePrefix.length).trim() : text.trim();
+  let commandText = prefixUsed ? text.slice(effectivePrefix.length).trim() : text.trim();
+  let rawCommandName = commandText.split(/\s+/)[0];
 
   if (commandText.length === 0) {
     if (prefixUsed) {
       return message.reply(texts.emptyCommand);
-    } else {
-      return;
     }
+    return;
   }
 
   const commandArgs = commandText.split(/\s+/);
@@ -80,23 +80,37 @@ exports.command = async function ({ bot, message, msg, chatId, args }) {
   if (!command) {
     if (prefixUsed) {
       return message.reply(texts.commandNotFound.replace('{commandName}', commandName));
-    } else return;
+    }
+    return;
   }
   
-  const cmdPrefixSetting = command.nix.prefix ?? false;
+  const requiredPrefix = command.nix.prefix;
 
-  if (cmdPrefixSetting && prefixUsed) {
-    return message.reply(texts.noPrefixRequired.replace('{commandName}', command.nix.name));
+  if (requiredPrefix === false && !prefixUsed) {
+    return;
+  }
+  
+  if (requiredPrefix === true && prefixUsed) {
+    commandText = text.slice(effectivePrefix.length).trim();
+    commandArgs.unshift(...commandText.split(/\s+/).slice(1));
+  }
+  
+  if (requiredPrefix === true && !prefixUsed) {
+    commandText = text.trim();
+    commandArgs.unshift(...commandText.split(/\s+/).slice(1));
   }
 
-  if (!cmdPrefixSetting && !prefixUsed) {
-    return message.reply(texts.prefixRequired.replace('{commandName}', command.nix.name).replace('{prefix}', effectivePrefix));
+  if (requiredPrefix === false && prefixUsed) {
+    commandText = text.slice(effectivePrefix.length).trim();
+    commandArgs.unshift(...commandText.split(/\s+/).slice(1));
   }
 
+  commandName = commandText.split(/\s+/)[0].toLowerCase();
+  
   const usages = () => {
     if (!command.nix.guide) return;
     let usageText = `${symbols} Usages:\n\n`;
-    const displayPrefix = command.nix.prefix === true ? "" : effectivePrefix;
+    const displayPrefix = command.nix.prefix === false ? effectivePrefix : "";
 
     if (Array.isArray(command.nix.guide)) {
       usageText += command.nix.guide.map(guide => `${displayPrefix}${command.nix.name} ${guide}`).join("\n");
@@ -176,12 +190,12 @@ exports.command = async function ({ bot, message, msg, chatId, args }) {
 
     await command.onStart(context);
 
-    if (devMode === true) {
+    if (devMode) {
       const executionTime = Date.now() - dateNow;
       const blue = "\x1b[34m";
       const cyan = "\x1b[36m";
       const reset = "\x1b[0m";
-      const separator = `${blue}${"─".repeat(60)}${reset}`;
+      const separator = `${blue}${"─".repeat(40)}${reset}`;
 
       const logMessage = `
 ${separator}
