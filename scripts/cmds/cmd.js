@@ -7,7 +7,6 @@ module.exports = {
     name: 'cmd',
     author: 'ArYAN',
     version: '0.0.1',
-    role: 2,
     description: 'Manage commands: install, loadall, load, unload',
     usage: 'cmd <install|loadall|load|unload> [args]',
     admin: true,
