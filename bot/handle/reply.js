@@ -1,5 +1,5 @@
 exports.reply = async function({ bot, message, msg, chatId, args }) {
-  const { replies, cmds } = global.ownersv2;
+  const { replies, cmds } = global.teamnix;
   const userId = msg.from.id;
 
   if (!msg.reply_to_message) {
