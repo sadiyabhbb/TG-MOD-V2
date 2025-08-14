@@ -58,8 +58,8 @@ async function scriptsUtils() {
   const eventsPath = path.join(process.cwd(), 'scripts', 'events');
 
   const [commandErrors, eventErrors] = await Promise.all([
-    loadDirectory(cmdsPath, 'cmds', global.ownersv2.cmds),
-    loadDirectory(eventsPath, 'events', global.ownersv2.events)
+    loadDirectory(cmdsPath, 'cmds', global.teamnix.cmds),
+    loadDirectory(eventsPath, 'events', global.teamnix.events)
   ]);
 
   Object.assign(errors, commandErrors, eventErrors);
