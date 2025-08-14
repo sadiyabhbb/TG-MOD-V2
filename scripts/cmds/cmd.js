@@ -20,7 +20,7 @@ module.exports = {
     try {
       const subcmd = args[0]?.toLowerCase();
       const cmdFolder = path.join(__dirname, './');
-      const commands = global.ownersv2.cmds;
+      const commands = global.teamnix.cmds;
 
       if (!subcmd) {
         return message.reply('● Usage: `cmd <install|loadall|load|unload> [args]`');
