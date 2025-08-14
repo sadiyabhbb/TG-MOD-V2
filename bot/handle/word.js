@@ -1,4 +1,6 @@
 const { cmds } = global.ownersv2;
+const fs = require('fs');
+const path = require('path');
 
 exports.word = async function ({ bot, message, msg, chatId }) {
   if (!msg || !msg.text) return;
@@ -34,6 +36,7 @@ exports.word = async function ({ bot, message, msg, chatId }) {
       if (keywordRegex.test(msg.text)) {
         const args = text.split(/\s+/);
         try {
+      
           await cmd.onWord({ bot, message, msg, chatId, args });
         } catch (error) {
           console.error(`Error in event handler for command "${cmd.nix.name}": ${error.message}`);
