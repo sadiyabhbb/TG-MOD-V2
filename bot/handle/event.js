@@ -2,14 +2,14 @@ const moment = require("moment-timezone");
 
 exports.event = async function ({ bot, msg, chatId, message }) {
   const timeStart = Date.now();
-  const fullTime = moment.tz(global.settings.timeZone || "Asia/Dhaka");
+  const fullTime = moment.tz(global.config.timeZone || "Asia/Dhaka");
   const timeStr = fullTime.format("HH:mm:ss");
   const dateStr = fullTime.format("DD/MM/YYYY");
   const dayStr = fullTime.format("dddd");
   const yearStr = fullTime.format("YYYY");
 
   const { events } = global.ownersv2;
-  const { devMode } = global.settings;
+  const { devMode } = global.config;
 
   chatId = chatId || String(msg.chat.id);
 
@@ -27,7 +27,7 @@ exports.event = async function ({ bot, msg, chatId, message }) {
             const blue = "\x1b[34m";
             const cyan = "\x1b[36m";
             const reset = "\x1b[0m";
-            const separator = `${blue}${"─".repeat(60)}${reset}`;
+            const separator = `${blue}${"─".repeat(40)}${reset}`;
 
             const logMessage = `
 ${separator}
