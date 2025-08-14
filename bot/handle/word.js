@@ -1,4 +1,4 @@
-const { cmds } = global.ownersv2;
+const { cmds } = global.teamnix;
 const fs = require('fs');
 const path = require('path');
 
