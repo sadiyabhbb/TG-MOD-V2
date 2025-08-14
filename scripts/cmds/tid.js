@@ -3,7 +3,6 @@ module.exports = {
     name: "tid",
     version: "1.0.0",
     author: "ArYAN",
-    role: 0,
     description: "Show current chat TID (group ID)",
     category: "utility",
     usage: "tid",
