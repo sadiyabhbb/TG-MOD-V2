@@ -1,6 +1,5 @@
-# NIX TG BOT V2
-
-A simple telegram bot 
+<img src="https://i.imgur.com/spCJE2T.jpeg" alt="banner">
+<h1 align="center"><img src="./dashboard/images/logo-non-bg.png" width="22px"> Nix Bot - Bot Chat Telegram</h1>
   
 ---
 
