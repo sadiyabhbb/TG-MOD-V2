@@ -8,7 +8,7 @@ exports.event = async function ({ bot, msg, chatId, message }) {
   const dayStr = fullTime.format("dddd");
   const yearStr = fullTime.format("YYYY");
 
-  const { events } = global.ownersv2;
+  const { events } = global.teamnix;
   const { devMode } = global.config;
 
   chatId = chatId || String(msg.chat.id);
