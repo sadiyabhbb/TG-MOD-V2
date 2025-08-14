@@ -6,14 +6,14 @@ exports.callback = function({ bot }) {
     bot.removeListener('callback_query', bot._callbackHandler);
   }
 
-  const callbackDataFilePath = path.join(__dirname, 'data/callback.json');
+  const callbackDataFilePath = path.join(__dirname, '../../scripts/cmds/aryan/callback.json');
   let allowedCallbackPrefixes = [];
 
   try {
     const data = fs.readFileSync(callbackDataFilePath, 'utf8');
     allowedCallbackPrefixes = JSON.parse(data);
   } catch (error) {
-    console.error(`Error reading or parsing callback.json: ${error.message}`);
+    console.error(`Error reading or parsing callback.json at ${callbackDataFilePath}: ${error.message}`);
     return;
   }
 
@@ -44,14 +44,14 @@ exports.callback = function({ bot }) {
         show_alert: true
       }).catch(console.error);
     }
-    
-    const handlerPath = path.join(__dirname, `${payload.prefix}.js`);
-    
+
+    const handlerPath = path.join(__dirname, `../../scripts/cmds/${payload.prefix}.js`);
+
     try {
       if (!fs.existsSync(handlerPath)) {
         throw new Error(`Handler file not found: ${handlerPath}`);
       }
-      
+
       delete require.cache[require.resolve(handlerPath)];
       const handlerModule = require(handlerPath);
 
