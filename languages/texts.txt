@@ -1,5 +1,5 @@
 emptyCommand=Please enter a command after the prefix or type "help" to see available commands.
-commandNotFound=Command "{commandName}" does not exist, type {prefix}help to see all available commands.
+commandNotFound=command "{commandName}" does not exist, type {prefix}help to see all available commands.
 prefixRequired=The command "{commandName}" requires a prefix. Please use "{prefix}" before the command name.
 noPrefixRequired=The command "{commandName}" does not require a prefix. Please invoke it without the prefix.
 adminGroupOnly=The "{commandName}" command can only be used in a group or supergroup by an administrator.
