@@ -50,7 +50,7 @@ You can deploy the bot on the following platforms:
 
 ## Bot Command Structure
 
-Commands in Ownersv2 follow a specific structure for consistency and maintainability. Here's the basic template:
+Commands in teamnix follow a specific structure for consistency and maintainability. Here's the basic template:
 
 ```javascript
 const nix = {
