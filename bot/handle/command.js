@@ -32,7 +32,7 @@ exports.command = async function ({ bot, message, msg, chatId, args }) {
   const yearStr = fullTime.format("YYYY");
 
   const { admin, symbols, devMode, prefix } = global.config;
-  const { cmds, cooldowns } = global.ownersv2;
+  const { cmds, cooldowns } = global.teamnix;
   const { from, chat } = msg;
   const senderID = String(from.id);
   const userId = from.id;
