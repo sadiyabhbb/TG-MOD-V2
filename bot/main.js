@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { loadScripts } = require('./login/loadScripts');
+const { loadScripts, RESTART_FILE } = require('./login/loadScripts');
 const { utils } = require('../func/utils.js');
 
 const configPath = path.join(process.cwd(), 'config.json');
@@ -25,9 +25,21 @@ global.ownersv2 = {
   events: new Map()
 };
 
-global.scripts = scriptsUtils;
+global.scripts = utils;
 
-scriptsUtils();
+utils();
 
-const { log } = require('./login/log');
-login();
+const { login } = require('./login/log');
+const botInstance = login();
+
+if (fs.existsSync(RESTART_FILE)) {
+  try {
+    const data = JSON.parse(fs.readFileSync(RESTART_FILE, 'utf8'));
+    if (data.chatId) {
+      botInstance.sendMessage(data.chatId, "✅ Bot restarted successfully.");
+    }
+  } catch (err) {
+    console.error("Failed to send restart confirmation:", err);
+  }
+  fs.unlinkSync(RESTART_FILE);
+}
