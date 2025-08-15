@@ -17,7 +17,7 @@ module.exports = {
     const reply_to_message = msg.reply_to_message;
 
     if (!reply_to_message) {
-      return message.reply({ body: "❌ Please reply to the message you want to delete." });
+      return message.reply({ body: "❌ Please reply to the message you want to unsend." });
     }
 
     try {
