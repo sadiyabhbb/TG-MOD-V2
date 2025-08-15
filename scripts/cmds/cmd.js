@@ -2,6 +2,22 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 
+const configPath = path.join(__dirname, '..', '..', 'config.json');
+
+function loadConfig() {
+  try {
+    const configData = fs.readFileSync(configPath, 'utf-8');
+    const config = JSON.parse(configData);
+    if (!config.admin) {
+      config.admin = [];
+    }
+    return config;
+  } catch (error) {
+    console.error("Error loading config.json:", error);
+    return { admin: [] };
+  }
+}
+
 module.exports = {
   nix: {
     name: 'cmd',
@@ -10,12 +26,19 @@ module.exports = {
     description: 'Manage commands: install, loadall, load, unload',
     usage: 'cmd <install|loadall|load|unload> [args]',
     admin: true,
+    vip: true,
     category: 'Admin',
     prefix: false,
     aliases: ['cm']
   },
 
-  async onStart({ message, args }) {
+  async onStart({ message, args, userId }) {
+    const config = loadConfig();
+
+    if (!config.admin.includes(String(userId))) {
+      return message.reply("❌ | Only bot's admin can use the command");
+    }
+    
     try {
       const subcmd = args[0]?.toLowerCase();
       const cmdFolder = path.join(__dirname, './');
