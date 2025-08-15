@@ -19,6 +19,10 @@ module.exports = {
     try {
       const subcmd = args[0]?.toLowerCase();
       const cmdFolder = path.join(__dirname, './');
+      
+      if (!global.teamnix || !global.teamnix.cmds) {
+          global.teamnix = { cmds: new Map() };
+      }
       const commands = global.teamnix.cmds;
 
       if (!subcmd) {
@@ -55,42 +59,32 @@ module.exports = {
 
       if (subcmd === 'install') {
         const fileName = args[1];
-        if (!fileName || !fileName.endsWith('.js')) {
-          return message.reply('● Usage: `cmd install <filename.js> <command code or raw URL>`');
+        const url = args[2];
+        
+        if (!fileName || !url || !fileName.endsWith('.js')) {
+          return message.reply('● Usage: `cmd install <filename.js> <URL>`\nExample: `cmd install link.js http://goatbin.vercel.app/raw/BCb5F-IC6`');
         }
-        const thirdArg = args[2];
+
         let code;
-        if (thirdArg && (thirdArg.startsWith('http://') || thirdArg.startsWith('https://'))) {
-          try {
-            const response = await axios.get(thirdArg);
-            code = response.data;
-          } catch (err) {
-            return message.reply(`❌ Failed to fetch from URL.\nReason: ${err.message}`);
-          }
-        } else {
-          let fullText = message.text || '';
-          if (message.reply_to_message && message.reply_to_message.text) {
-            fullText = message.reply_to_message.text;
-          }
-          const startIdx = fullText.indexOf(fileName);
-          if (startIdx === -1) {
-            return message.reply('❌ Could not find the filename in the message or replied message.');
-          }
-          code = fullText.slice(startIdx + fileName.length).trim();
-          if (!code) {
-            return message.reply('❌ No code provided after filename or in replied message.');
-          }
+        try {
+          const response = await axios.get(url);
+          code = response.data;
+        } catch (err) {
+          return message.reply(`❌ Failed to fetch code from URL.\nReason: ${err.message}`);
         }
+
         const filePath = path.join(cmdFolder, fileName);
         if (fs.existsSync(filePath)) {
           return message.reply(`❌ Command file '${fileName}' already exists. Use 'cmd reload' or 'cmd unload' first.`);
         }
+        
         try {
           fs.writeFileSync(filePath, code, 'utf-8');
         } catch (err) {
           console.error('Write File Error:', err);
           return message.reply(`❌ Failed to write command file.\nReason: ${err.message}`);
         }
+        
         try {
           clearRequireCache(filePath);
           const loadedCmd = require(filePath);
@@ -98,7 +92,7 @@ module.exports = {
             fs.unlinkSync(filePath);
             return message.reply('❌ Invalid command format. Installation aborted.');
           }
-          return message.reply(`✅ | Installed command "${loadedCmd.nix.name}" successfully, the command file is saved at /scripts/cmds/${loadedCmd.nix.name}.js`);
+          return message.reply(`✅ | Installed command "${loadedCmd.nix.name}" successfully from URL.\nCommand file is saved at /scripts/cmds/${fileName}`);
         } catch (err) {
           console.error('Install Load Error:', err);
           if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
