@@ -44,7 +44,8 @@ module.exports = {
     name: "admin",
     prefix: false,
     admin: true,
-    vip: false,
+    vip: true,
+    role: 2,
     author: "ArYAN",
     version: "1.0.0",
     description: "Manage bot administrators: add, remove, list",
@@ -53,9 +54,17 @@ module.exports = {
     aliases: ["ad"]
   },
 
-  async onStart({ bot, message, args, chatId }) {
+  async onStart({ bot, message, args, chatId, userId }) {
     const config = loadConfig();
     const symbol = config.symbols || "●";
+
+   
+    if (config.admin.includes(String(userId))) {
+      
+    } else {
+ 
+      return message.reply("❌ | Only bot's admin can use the command");
+    }
 
     if (!args.length) {
       return message.reply(
