@@ -1,18 +1,21 @@
 {
-  "Owner": "ArYAN",
-  "Facebook": "https://www.facebook.com/100001200784032",
-  "UserName": "itzaryan008",
   "devMode": true,
-  "adminOnly": false,
   "timeZone": "Asia/Dhaka",
   "prefix": "PREFIX",
   "symbols": "●",
+  "owner": {
+    "name": "YOUR_NAME",
+    "facebook": "FACEBOOK_ID",
+    "username": "TG_USERNAME"
+  },
   "admin": [
     "ADMIN_UID"
   ],
-  "uid": [
+  "vip": [
     "VIP_UID"
   ],
+  "loadCmds": true,
+  "loadEvents": true,
   "groups": {
     "noAdmin": true,
     "whitelist": false,
