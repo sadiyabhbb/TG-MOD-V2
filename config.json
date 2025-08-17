@@ -1,16 +1,36 @@
 {
-  "owner": "Aryan",
-  "username": "itzaryan008",
+  "Owner": "ArYAN",
+  "Facebook": "https://www.facebook.com/100001200784032",
+  "UserName": "itzaryan008",
   "devMode": true,
   "adminOnly": false,
   "timeZone": "Asia/Dhaka",
-  "prefix": "/",
+  "prefix": "PREFIX",
   "symbols": "●",
   "admin": [
-    "admin uid"
+    "ADMIN_UID"
   ],
   "uid": [
-    "vip admin uid"
+    "VIP_UID"
   ],
-  "api": "https://aryan-nix-apis.vercel.app/api"
+  "groups": {
+    "noAdmin": true,
+    "whitelist": false,
+    "list": [
+      "GROUP_ID1",
+      "GROUP_ID2"
+    ]
+  },
+  "inbox": {
+    "enabled": true
+  },
+  "mongoDB": {
+    "enabled": false,
+    "url": "MONGODB_URL",
+    "dbName": "DATABASE_NAME"
+  },
+  "apiKeys": {
+    "gemini": "",
+    "openai": ""
+  }
 }
