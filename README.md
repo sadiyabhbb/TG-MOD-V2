@@ -13,7 +13,7 @@
 
 
 2. **Admin ID**  
-   Retrieve it via [MyIDBot](https://t.me/uidBot).  
+   Retrieve it via [uidBot](https://t.me/uidBot).  
    ![MyIDBot Preview](https://i.imgur.com/5ceuhOA.jpeg)
    
 ### Configuration
