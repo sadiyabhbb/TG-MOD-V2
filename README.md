@@ -9,15 +9,12 @@
 
 1. **Bot Token**  
    Get it from [BotFather](https://t.me/BotFather) on Telegram.  
-   ![BotFather Preview](https://i.imgur.com/1eBNpbK.jpeg)
+   ![BotFather Preview](https://i.imgur.com/5dIzgnN.jpeg)
 
-2. **Verification with Manybot**  
-   After obtaining the token, verify it to get your bot's URL (`t.me/<bot_username>`) using [Manybot](https://t.me/Manybot).  
-   ![Manybot Preview](https://i.imgur.com/uENHXlz.jpeg)
 
-3. **Admin ID**  
-   Retrieve it via [MyIDBot](https://t.me/myidbot).  
-   ![MyIDBot Preview](https://i.imgur.com/pwwMlg1.jpeg)
+2. **Admin ID**  
+   Retrieve it via [MyIDBot](https://t.me/uidBot).  
+   ![MyIDBot Preview](https://i.imgur.com/5ceuhOA.jpeg)
    
 ### Configuration
 1. Add the Bot Token to `token.txt`.
