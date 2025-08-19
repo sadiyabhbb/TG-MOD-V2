@@ -23,7 +23,7 @@ const nix = {
         author: "ARYAN",
         version: "1.0",
         cooldowns: 5,
-        role: 1, 
+        role: 0, 
         description: "Change the command prefix for the group.",
         category: "GROUP",
         guide: "Use: {pn} change <new_prefix>"
