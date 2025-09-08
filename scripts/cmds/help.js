@@ -64,7 +64,7 @@ module.exports = {
 ╭──────────────◊
 │ » Total commands: ${[...new Set(commands.values())].length}
 │ » A Powerful Telegram bot
-│ » itz Aryan
+│ » Aryan Rayhan
 ╰──────────◊
 「 Nix bot 」
     `.trim();
