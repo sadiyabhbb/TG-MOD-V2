@@ -1,7 +1,7 @@
 {
   "devMode": true,
   "timeZone": "Asia/Dhaka",
-  "prefix": "PREFIX",
+  "prefix": "!",
   "symbols": "●",
   "owner": {
     "name": "YOUR_NAME",
