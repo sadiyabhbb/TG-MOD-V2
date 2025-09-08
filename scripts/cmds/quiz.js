@@ -2,19 +2,12 @@ const axios = require("axios");
 const fs = require('fs');
 const path = require('path');
 
-const baseApiUrl = async () => {
-  const base = await axios.get(
-    `https://raw.githubusercontent.com/Blankid018/D1PT0/main/baseApiUrl.json`
-  );
-  return base.data.api;
-};
-
 const nix = {
   name: "quiz",
   version: "0.0.1",
   aliases: ["qz"],
   description: "Play a quiz game to earn coins.",
-  author: "Dipto  〆 ɴɪx ♡↠", // convert by ArYAN
+  author: "ArYAN", 
   prefix: false,
   category: "game",
   role: 0,
@@ -36,9 +29,7 @@ async function onStart({ bot, message, msg, chatId, args, usages }) {
   }
 
   try {
-    const response = await axios.get(
-      `${await baseApiUrl()}/quiz?category=${category}&q=random`
-    );
+    const response = await axios.get(`https://nix-quizv2.onrender.com/quiz?category=${category}&q=random`);
 
     const quizData = response.data.question;
     const { question, correctAnswer, options } = quizData;
