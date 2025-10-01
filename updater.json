@@ -1,5 +1,5 @@
 {
-  "repository": "https://github.com/FNG-ARYAN/TG-BOT-V2.git",
+  "repository": "https://github.com/aryannix/TG-BOT-V2.git",
   "branch": "main",
   "preserve": ["config"],
   "backup": "bot/backups"
