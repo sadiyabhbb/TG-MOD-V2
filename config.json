@@ -1,18 +1,18 @@
 {
   "devMode": true,
   "timeZone": "Asia/Dhaka",
-  "prefix": "!",
+  "prefix": "/",
   "symbols": "●",
   "owner": {
-    "name": "YOUR_NAME",
-    "facebook": "FACEBOOK_ID",
-    "username": "TG_USERNAME"
+    "name": "LIKHON AHMED",
+    "facebook": "LIKHON AHMED",
+    "username": "rx_rihad"
   },
   "admin": [
-    "ADMIN_UID"
+    "7933110913"
   ],
   "vip": [
-    "VIP_UID"
+    "7933110913"
   ],
   "loadCmds": true,
   "loadEvents": true,
